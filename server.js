@@ -87,7 +87,7 @@ function(username, password, done) {
             }
             var salt = bcrypt.genSaltSync(10);
             var hash = bcrypt.hashSync(password, salt);
-            if (bcrypt.compareSync(password, user.password)) {
+            if (bcrypt.compareSync(hash, user.password)) {
                 return done(null, false, {
                     message: 'Invalid password'
                 });
@@ -151,11 +151,11 @@ app.post("/register", function(req, res) {
     try {
 
 
-        if (check(req.params.email).len(4, 64).isEmail() && check(req.params.username).is(/^[a-z]+$/) && check(req.params.password).len(6, 64)) {
+        if (check(req.body.email).len(4, 64).isEmail() && check(req.body.username).is(/^[a-z]+$/) && check(req.body.password).len(6, 64)) {
             var user = {
-                username: sanitize(req.params.username).trim(),
-                email: sanitize(req.params.email).trim(),
-                password: sanitize(req.params.password).trim()
+                username: sanitize(req.body.username).trim(),
+                email: sanitize(req.body.email).trim(),
+                password: sanitize(req.body.password).trim()
             };
 
             var salt = bcrypt.genSaltSync(10);
