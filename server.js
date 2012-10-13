@@ -6,7 +6,9 @@ var app = express();
 
 client = new pg.Client(pg_connectionString);
 client.connect();
-
+console.log("==============================================================");
+console.log("connected to: "+pg_connectionString);
+console.log("==============================================================");
 
 app.get("/", function(req, res) {
     client.query('INSERT INTO users(username, email) VALUES($1, $2)', ["scott_peter", "scott@hotmail.com"]);
