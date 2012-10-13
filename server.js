@@ -18,7 +18,7 @@ console.log("==============================================================");
 
 app.get("/", function(req, res) {
     client.query('INSERT INTO users(username, email) VALUES($1, $2)', ["scott_peter", "scott@hotmail.com"]);
-    var users = {};
+    var users = [];
 
     var query = client.query('SELECT * FROM users');
     query.on('row', function(result) {
