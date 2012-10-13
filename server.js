@@ -25,7 +25,7 @@ app.get("/", function(req, res) {
         console.log(result);
 
         if (!result) {
-            continue;
+            // do nothing
         }
         else {
             users.push(result);
