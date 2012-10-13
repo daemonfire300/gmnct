@@ -10,7 +10,8 @@
     "ejs": "latest",
     "passport": "latest",
     "bcrypt": "latest",
-    "express-form": "latest"
+    "express-form": "latest",
+    "passport-local": "latest"
   },
     "engines": {
         "node": "<0.8.12",
