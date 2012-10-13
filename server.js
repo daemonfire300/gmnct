@@ -3,8 +3,9 @@ var express = require('express'),
     util = require('util'),
     LocalStrategy = require('passport-local').Strategy,
     bcrypt = require("bcrypt"),
-    form = require("express-form"),
-    field = form.field;
+    validator = require("validator"),
+    check = validator.check,
+    sanitize = validator.sanitize;
 var pg = require("pg");
 var cons = require("consolidate");
 var pg_connectionString = process.env.DATABASE_URL;
@@ -146,38 +147,29 @@ app.get("/register", function(req, res) {
     });
 });
 
-app.post("/register", form(
-        field("username").trim().required().is(/^[a-z]+$/),
-        field("password").trim().required().is(/^[0-9]+$/),
-        field("email").trim().isEmail()
-    ),
+app.post("/register", function(req, res) {
+    if (check(req.params.email).len(4, 64).isEmail() && check(req.params.username).is(/^[a-z]+$/) && check(req.params.password).len(6, 64)) {
+        var user = {
+            username: sanitize(req.params.username).trim(),
+            email: sanitize(req.params.email).trim(),
+            password: sanitize(req.params.password).trim()
+        };
 
-    function(req, res) {
-
-        if(!req.form.isValid){
-            console.log(req.form.errors);
-            res.send(req.form.errors);
-        }
-        else{
-            var user = {
-                username: req.form.username,
-                email: req.form.email,
-                password: req.form.password
-            };
-
-            var salt = bcrypt.genSaltSync(10);
-            var hash = bcrypt.hashSync(user.password, salt);
-            client.query('INSERT INTO users(username, email, password) VALUES($1, $2, $3)', [user.username, user.email, hash], function(err, result){
-                if(!err){
-                    console.log(result);
-                    res.send("Created User");
-                }
-                else{
-                    res.send("An error occured");
-                }
-            });
-
-        }
+        var salt = bcrypt.genSaltSync(10);
+        var hash = bcrypt.hashSync(user.password, salt);
+        client.query('INSERT INTO users(username, email, password) VALUES($1, $2, $3)', [user.username, user.email, hash], function(err, result) {
+            if (!err) {
+                console.log(result);
+                res.send("Created User");
+            }
+            else {
+                res.send("An error occured");
+            }
+        });
+    }
+    else {
+        res.send("Invalid input");
+    }
 
 });
 
