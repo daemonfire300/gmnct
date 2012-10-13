@@ -1,6 +1,5 @@
 var express = require('express'),
     passport = require('passport'),
-    util = require('util'),
     LocalStrategy = require('passport-local').Strategy,
     bcrypt = require("bcrypt"),
     validator = require("validator"),
@@ -148,6 +147,7 @@ app.get("/register", function(req, res) {
 });
 
 app.post("/register", function(req, res) {
+    console.log(req.body);
     if (check(req.body.email).len(4, 64).isEmail() && check(req.body.username).is(/^[a-zA-Z\d]+$/) && check(req.body.password).len(6, 64)) {
         var user = {
             username: sanitize(req.body.username).trim(),
@@ -163,6 +163,7 @@ app.post("/register", function(req, res) {
                 res.send("Created User");
             }
             else {
+                console.log(err);
                 res.send("An error occured");
             }
         });
