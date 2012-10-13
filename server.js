@@ -140,13 +140,13 @@ app.get("/", function(req, res) {
 
 });
 
-app.get("/reqister", function(req, res) {
+app.get("/register", function(req, res) {
     res.render('register', {
         title: "Register"
     });
 });
 
-app.post("/reqister", form(
+app.post("/register", form(
         field("username").trim().required().is(/^[a-z]+$/),
         field("password").trim().required().is(/^[0-9]+$/),
         field("email").trim().isEmail()
