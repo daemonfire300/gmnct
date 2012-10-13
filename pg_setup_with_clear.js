@@ -5,7 +5,7 @@ console.log("connecting to: "+connectionString);
 client = new pg.Client(connectionString);
 client.connect();
 client.query('DROP TABLE IF EXISTS users');
-query = client.query('CREATE TABLE users (id integer,username text, email text) PRIMARY KEY(id)');
+query = client.query('CREATE TABLE users (id integer PRIMARY KEY,username text, email text)');
 query.on('end', function() {
     client.end();
 });
