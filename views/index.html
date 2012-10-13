@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title><%= title %></title>
+    </head>
+    <body>
+
+        <ul>
+        <% if (users) {
+        users.forEach(function(user){ %>
+            <li>#<%= user.id %> <%= user.username %> <%= user.email %></li>
+        <%
+            })}
+        %>
+        </ul>
+    </body>
+</html>
