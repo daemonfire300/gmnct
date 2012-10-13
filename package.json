@@ -7,7 +7,10 @@
     "express": "3.x",
     "pg": "latest",
     "consolidate": "latest",
-    "ejs": "latest"
+    "ejs": "latest",
+    "passport": "latest",
+    "bcrypt": "latest",
+    "express-form": "latest"
   },
     "engines": {
         "node": "<0.8.12",
