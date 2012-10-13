@@ -148,27 +148,35 @@ app.get("/register", function(req, res) {
 });
 
 app.post("/register", function(req, res) {
-    if (check(req.params.email).len(4, 64).isEmail() && check(req.params.username).is(/^[a-z]+$/) && check(req.params.password).len(6, 64)) {
-        var user = {
-            username: sanitize(req.params.username).trim(),
-            email: sanitize(req.params.email).trim(),
-            password: sanitize(req.params.password).trim()
-        };
+    try {
 
-        var salt = bcrypt.genSaltSync(10);
-        var hash = bcrypt.hashSync(user.password, salt);
-        client.query('INSERT INTO users(username, email, password) VALUES($1, $2, $3)', [user.username, user.email, hash], function(err, result) {
-            if (!err) {
-                console.log(result);
-                res.send("Created User");
-            }
-            else {
-                res.send("An error occured");
-            }
-        });
+
+        if (check(req.params.email).len(4, 64).isEmail() && check(req.params.username).is(/^[a-z]+$/) && check(req.params.password).len(6, 64)) {
+            var user = {
+                username: sanitize(req.params.username).trim(),
+                email: sanitize(req.params.email).trim(),
+                password: sanitize(req.params.password).trim()
+            };
+
+            var salt = bcrypt.genSaltSync(10);
+            var hash = bcrypt.hashSync(user.password, salt);
+            client.query('INSERT INTO users(username, email, password) VALUES($1, $2, $3)', [user.username, user.email, hash], function(err, result) {
+                if (!err) {
+                    console.log(result);
+                    res.send("Created User");
+                }
+                else {
+                    res.send("An error occured");
+                }
+            });
+        }
+        else {
+            res.send("Invalid input");
+        }
     }
-    else {
-        res.send("Invalid input");
+    catch (e) {
+        console.log(e.message);
+        res.send(e.message);
     }
 
 });
