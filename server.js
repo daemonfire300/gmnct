@@ -148,35 +148,27 @@ app.get("/register", function(req, res) {
 });
 
 app.post("/register", function(req, res) {
-    try {
+    if (check(req.body.email).len(4, 64).isEmail() && check(req.body.username).is(/^[a-zA-Z\d]+$/) && check(req.body.password).len(6, 64)) {
+        var user = {
+            username: sanitize(req.body.username).trim(),
+            email: sanitize(req.body.email).trim(),
+            password: sanitize(req.body.password).trim()
+        };
 
-
-        if (check(req.body.email).len(4, 64).isEmail() && check(req.body.username).is(/^[a-zA-Z\d]+$/) && check(req.body.password).len(6, 64)) {
-            var user = {
-                username: sanitize(req.body.username).trim(),
-                email: sanitize(req.body.email).trim(),
-                password: sanitize(req.body.password).trim()
-            };
-
-            var salt = bcrypt.genSaltSync(10);
-            var hash = bcrypt.hashSync(user.password, salt);
-            client.query('INSERT INTO users(username, email, password) VALUES($1, $2, $3)', [user.username, user.email, hash], function(err, result) {
-                if (!err) {
-                    console.log(result);
-                    res.send("Created User");
-                }
-                else {
-                    res.send("An error occured");
-                }
-            });
-        }
-        else {
-            res.send("Invalid input");
-        }
+        var salt = bcrypt.genSaltSync(10);
+        var hash = bcrypt.hashSync(user.password, salt);
+        client.query('INSERT INTO users(username, email, password) VALUES($1, $2, $3)', [user.username, user.email, hash], function(err, result) {
+            if (!err) {
+                console.log(result);
+                res.send("Created User");
+            }
+            else {
+                res.send("An error occured");
+            }
+        });
     }
-    catch (e) {
-        console.log(e.message);
-        res.send(e.message);
+    else {
+        res.send("Invalid input");
     }
 
 });
