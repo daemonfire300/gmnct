@@ -32,7 +32,7 @@ app.get("/", function(req, res) {
         }
     });
     query.on("end", function(){
-        res.render('index', { users: users});
+        res.render('index', { users: users, title: "Index" });
         client.end();
     });
 
