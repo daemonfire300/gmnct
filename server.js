@@ -151,7 +151,7 @@ app.post("/register", function(req, res) {
     try {
 
 
-        if (check(req.body.email).len(4, 64).isEmail() && check(req.body.username).is(/^[a-z]+$/) && check(req.body.password).len(6, 64)) {
+        if (check(req.body.email).len(4, 64).isEmail() && check(req.body.username).is(/^[a-zA-Z\d]+$/) && check(req.body.password).len(6, 64)) {
             var user = {
                 username: sanitize(req.body.username).trim(),
                 email: sanitize(req.body.email).trim(),
