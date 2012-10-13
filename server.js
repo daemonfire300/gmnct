@@ -13,7 +13,7 @@ console.log("==============================================================");
 app.get("/", function(req, res) {
     client.query('INSERT INTO users(username, email) VALUES($1, $2)', ["scott_peter", "scott@hotmail.com"]);
 
-    var query = client.query('SELECT username AS name FROM users');
+    var query = client.query('SELECT * FROM users');
     query.on('row', function(result) {
         console.log(result);
 
@@ -21,7 +21,7 @@ app.get("/", function(req, res) {
             return res.send('No data found');
         }
         else {
-            res.send('Username: ' + result.name);
+            res.send('Username: ' + result.username + ' #' + result.id);
         }
     });
 

@@ -1,0 +1,5 @@
+*.c9revisions
+*.c9save
+*.log
+*.git
+node_modules

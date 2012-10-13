@@ -1,0 +1,11 @@
+var pg = require('pg').native,
+    connectionString = process.env.DATABASE_URL,
+    client, query;
+console.log("connecting to: "+connectionString);
+client = new pg.Client(connectionString);
+client.connect();
+client.query('DROP TABLE IF EXISTS users');
+query = client.query('CREATE TABLE users (id integer,username text, email text) PRIMARY KEY(id)');
+query.on('end', function() {
+    client.end();
+});
