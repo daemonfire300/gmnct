@@ -147,6 +147,7 @@ app.get("/register", function(req, res) {
 });
 
 app.post("/register", function(req, res) {
+    console.log("Beginning registration process");
     console.log(req.body);
     if (check(req.body.email).len(4, 64).isEmail() && check(req.body.username).is(/^[a-zA-Z\d]+$/) && check(req.body.password).len(6, 64)) {
         var user = {
@@ -171,6 +172,7 @@ app.post("/register", function(req, res) {
     else {
         res.send("Invalid input");
     }
+    console.log("Finished registration process");
 
 });
 
