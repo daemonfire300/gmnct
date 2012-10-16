@@ -158,7 +158,8 @@ app.post("/register", function(req, res) {
 
         var salt = bcrypt.genSaltSync(10);
         var hash = bcrypt.hashSync(user.password, salt);
-        client.query('INSERT INTO users(username, email, password) VALUES($1, $2, $3)', [user.username, user.email, hash], function(err, result) {
+        var query = client.query('INSERT INTO users(username, email, password) VALUES($1, $2, $3)', [user.username, user.email, hash], function(err, result) {
+            console.log(err);
             if (!err) {
                 console.log(result);
                 res.send("Created User");
