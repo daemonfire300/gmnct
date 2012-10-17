@@ -230,6 +230,7 @@ app.post("/login", passport.authenticate('local', {
     failureFlash: true
 }), function(req, res) {
     console.info(req.user);
+    res.redirect("/login");
 });
 
 app.listen(process.env.PORT, process.env.IP);
