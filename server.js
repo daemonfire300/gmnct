@@ -23,7 +23,7 @@ console.log("==============================================================");
 function findById(id, fn) {
     client.query("SELECT * FROM users WHERE id = $1", [id], function(err, result) {
         if (result && !err) {
-            fn(null, result[0]);
+            fn(null, result.rows[0]);
         }
         else {
             fn(new Error('User ' + id + ' does not exist'));
@@ -35,8 +35,8 @@ function findByUsername(username, fn) {
     client.query("SELECT * FROM users WHERE username = $1", [username], function(err, result) {
         if (result && !err) {
             console.log("User found");
-            console.log(result[0]);
-            fn(null, result[0]);
+            console.log(result.rows[0]);
+            fn(null, result.rows[0]);
         }
         else {
             fn(new Error('User ' + username + ' does not exist'));
