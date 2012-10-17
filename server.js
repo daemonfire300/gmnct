@@ -224,7 +224,6 @@ app.get("/login", function(req, res) {
 
 app.post("/login", passport.authenticate('local', { failureRedirect: '/login', failureFlash: true }),function(req, res) {
     console.info(req.user);
-    res.send("logged in, yayayay");
 });
 
 app.listen(process.env.PORT, process.env.IP);
