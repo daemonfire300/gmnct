@@ -124,9 +124,10 @@ app.get("/", function(req, res) {
     var users = [];
     console.info(req.user);
     var query = client.query('SELECT * FROM users');
-    query.on('row', function(result) {
-        if (!result) {
+    query.on('row', function(result, err) {
+        if (err) {
             // do nothing
+            console.error(err);
         }
         else {
             users.push(result);
