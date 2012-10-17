@@ -113,8 +113,8 @@ app.configure(function() {
     // persistent login sessions (recommended).
     app.use(passport.initialize());
     app.use(passport.session());
-    app.use(app.router);
     app.use(flash());
+    app.use(app.router);
 });
 
 app.get("/", function(req, res) {
