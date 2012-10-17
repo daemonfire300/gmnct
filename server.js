@@ -127,15 +127,18 @@ app.get("/", function(req, res) {
     var users = [];
     console.info(req.user);
     var query = client.query('SELECT * FROM users');
-    query.on('row', function(row, err) {
-        if (err) {
+    query.on('row', function(row) {
+        if (!row) {
             // do nothing
-            console.error(err);
         }
         else {
             console.log(row);
             users.push(row);
         }
+    });
+
+    query.on('error', function(err){
+        console.error(err);
     });
 
     query.on("end", function() {
