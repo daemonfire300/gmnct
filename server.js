@@ -35,7 +35,7 @@ function findByUsername(username, fn) {
     client.query("SELECT * FROM users WHERE username = $1", [username], function(err, result) {
         if (result && !err) {
             console.log("User found");
-            console.log(result);
+            console.log(result[0]);
             fn(null, result[0]);
         }
         else {
