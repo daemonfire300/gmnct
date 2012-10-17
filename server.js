@@ -175,7 +175,7 @@ app.post("/register", function(req, res) {
         }
     };
 
-    if (validators.email.length && validators.email.isEmail && validators.username.length && validators.username.isText && validators.password.length) {
+    if (validators.email.valid_length && validators.email.isEmail && validators.username.valid_length && validators.username.isText && validators.password.valid_length) {
         var user = {
             username: sanitize(req.body.username).trim(),
             email: sanitize(req.body.email).trim(),
@@ -199,7 +199,7 @@ app.post("/register", function(req, res) {
     else {
         errors.push("Wrong input");
     }
-    if (errors.length() > 0) {
+    if (errors.length > 0) {
         res.render("register", {
             title: "Register",
             errors: errors,
