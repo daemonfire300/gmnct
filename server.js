@@ -22,7 +22,7 @@ console.log("==============================================================");
 function findById(id, fn) {
     client.query("SELECT * FROM users WHERE id = $1", [id], function(err, result) {
         if (result && !err) {
-            fn(null, result);
+            fn(null, result[0]);
         }
         else {
             fn(new Error('User ' + id + ' does not exist'));
@@ -33,7 +33,7 @@ function findById(id, fn) {
 function findByUsername(username, fn) {
     client.query("SELECT * FROM users WHERE username = $1", [username], function(err, result) {
         if (result && !err) {
-            fn(null, result);
+            fn(null, result[0]);
         }
         else {
             fn(new Error('User ' + username + ' does not exist'));
@@ -92,7 +92,7 @@ function(username, password, done) {
                 });
             }
             return done(null, user);
-        })
+        });
     });
 }));
 
@@ -147,9 +147,22 @@ app.get("/register", function(req, res) {
 });
 
 app.post("/register", function(req, res) {
-    console.log("Beginning registration process");
-    console.log(req.body);
-    if (check(req.body.email).len(4, 64).isEmail() && check(req.body.username).is(/^[a-zA-Z\d]+$/) && check(req.body.password).len(6, 64)) {
+    var errors = [];
+    var validators = {
+        email: {
+            length: check(req.body.email).len(4, 64),
+            isEmail: check(req.body.email).isEmail()
+        },
+        username: {
+            length: check(req.body.username).len(3,64),
+            isText: check(req.body.username).is(/^[a-zA-Z\d]+$/)
+        },
+        password: {
+            length: check(req.body.password).len(6, 64)
+        }
+    };
+
+    if (validators.email.length && validators.email.isEmail && validators.username.length && validators.username.isText && validators.password.length) {
         var user = {
             username: sanitize(req.body.username).trim(),
             email: sanitize(req.body.email).trim(),
@@ -159,24 +172,35 @@ app.post("/register", function(req, res) {
         var salt = bcrypt.genSaltSync(10);
         var hash = bcrypt.hashSync(user.password, salt);
         var query = client.query('INSERT INTO users(username, email, password) VALUES($1, $2, $3)', [user.username, user.email, hash], function(err, result) {
-            console.log("Error");
-            console.log(err);
-            console.log("!END Error");
             if (!err) {
+                console.info("Created User");
                 console.log(result);
-                res.send("Created User");
             }
             else {
-                console.log(err);
-                res.send("An error occured");
+                console.error("Error while trying to create user");
+                console.warn(err);
+                errors.push("Error while trying to create user");
             }
         });
     }
     else {
-        res.send("Invalid input");
+        errors.push("Wrong input");
     }
-    console.log("Finished registration process");
+    if (errors.length() > 0) {
+        res.render("register", {
+            title: "Register",
+            errors: errors,
+            validators: validators,
+            user_data: req.body
+        });
+    }
+    else {
+        res.redirect("/register/success");
+    }
+});
 
+app.get("/register/success", function(req, res){
+    res.send("hurray");
 });
 
 app.get("/login", function(req, res) {
