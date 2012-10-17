@@ -143,7 +143,19 @@ app.get("/", function(req, res) {
 app.get("/register", function(req, res) {
     res.render('register', {
         title: "Register",
-        validators: null
+        validators: {
+            email: {
+                length: true,
+                isEmail: true
+            },
+            username: {
+                length: true,
+                isText: true
+            },
+            password: {
+                length: true
+            }
+        }
     });
 });
 
@@ -155,7 +167,7 @@ app.post("/register", function(req, res) {
             isEmail: check(req.body.email).isEmail()
         },
         username: {
-            length: check(req.body.username).len(3,64),
+            length: check(req.body.username).len(3, 64),
             isText: check(req.body.username).is(/^[a-zA-Z\d]+$/)
         },
         password: {
@@ -200,7 +212,7 @@ app.post("/register", function(req, res) {
     }
 });
 
-app.get("/register/success", function(req, res){
+app.get("/register/success", function(req, res) {
     res.send("hurray");
 });
 
