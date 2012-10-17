@@ -222,7 +222,7 @@ app.get("/login", function(req, res) {
     res.render("login", {
         title: "Login",
         message: req.flash("error")
-    })
+    });
 });
 
 app.post("/login", passport.authenticate('local', {
@@ -235,7 +235,7 @@ app.post("/login", passport.authenticate('local', {
 
 app.get("/user/view/:userid", function(req, res){
     if(req.params.userid >= 1){
-        var uid = req.params.id;
+        var uid = req.params.userid;
         console.log("Attempting to find user with id: "+uid);
         var query = client.query("SELECT * FROM users WHERE id = $1", [uid], function(err, result){
             if(!err){
@@ -246,7 +246,7 @@ app.get("/user/view/:userid", function(req, res){
                     });
                 }
                 else{
-                    res.redirect("/"),
+                    res.redirect("/");
                 }
             }
             else{
