@@ -11,7 +11,8 @@
     "passport": "latest",
     "bcrypt": "latest",
     "validator": "latest",
-    "passport-local": "latest"
+    "passport-local": "latest",
+    "connect-flash": "latest"
   },
     "engines": {
         "node": "<0.8.12",

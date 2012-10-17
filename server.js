@@ -4,7 +4,8 @@ var express = require('express'),
     bcrypt = require("bcrypt"),
     validator = require("validator"),
     check = validator.check,
-    sanitize = validator.sanitize;
+    sanitize = validator.sanitize,
+    flash = require('connect-flash');
 var pg = require("pg");
 var cons = require("consolidate");
 var pg_connectionString = process.env.DATABASE_URL;
@@ -113,6 +114,7 @@ app.configure(function() {
     app.use(passport.initialize());
     app.use(passport.session());
     app.use(app.router);
+    app.use(flash());
 });
 
 app.get("/", function(req, res) {
@@ -217,11 +219,12 @@ app.get("/register/success", function(req, res) {
 });
 
 app.get("/login", function(req, res) {
-
+    res.render("login", {title: "Login", message: req.flash("error")})
 });
 
-app.post("/login", function(req, res) {
-
+app.post("/login", passport.authenticate('local', { failureRedirect: '/login', failureFlash: true }),function(req, res) {
+    console.info(req.user);
+    res.send("logged in, yayayay");
 });
 
 app.listen(process.env.PORT, process.env.IP);
