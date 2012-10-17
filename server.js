@@ -130,7 +130,6 @@ app.get("/", function(req, res) {
             // do nothing
         }
         else {
-            console.log(row);
             users.push(row);
         }
     });

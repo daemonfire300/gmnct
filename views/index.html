@@ -4,7 +4,9 @@
         <title><%= title %></title>
     </head>
     <body>
-        <%= user %>
+        <%= user.id %>
+        <%= user.email %>
+        <%= user.username %>
         <ul>
         <% if (users) {
         users.forEach(function(user){ %>
