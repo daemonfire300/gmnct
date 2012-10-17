@@ -43,6 +43,8 @@ function findByUsername(username, fn) {
             return fn(new Error('User ' + username + ' does not exist'));
         }
     });
+
+    return fn(null, null);
 }
 
 
@@ -95,6 +97,7 @@ function(username, password, done) {
                 message: 'Invalid password'
             });
         }
+
         return done(null, user);
     });
 
@@ -130,11 +133,13 @@ app.get("/", function(req, res) {
             console.error(err);
         }
         else {
+            console.log(row);
             users.push(row);
         }
     });
-    console.log(users);
+
     query.on("end", function() {
+        console.log(users);
         res.render('index', {
             user: req.user,
             users: users,
