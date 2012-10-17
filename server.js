@@ -43,8 +43,6 @@ function findByUsername(username, fn) {
             return fn(new Error('User ' + username + ' does not exist'));
         }
     });
-
-    return fn(null, null);
 }
 
 
