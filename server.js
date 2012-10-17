@@ -35,7 +35,8 @@ function findByUsername(username, fn) {
     client.query("SELECT * FROM users WHERE username = $1", [username], function(err, result) {
         if (result && !err) {
             console.log("User found");
-            console.log(result.rows[0]);
+            console.log(result.rows[0].id);
+            console.log(result.rows[0].username);
             fn(null, result.rows[0]);
         }
         else {
@@ -79,6 +80,8 @@ function(username, password, done) {
     // indicate failure and set a flash message. Otherwise, return the
     // authenticated `user`.
     findByUsername(username, function(err, user) {
+        console.log("findbyusername");
+        console.log(user);
         if (err) {
             return done(err);
         }
