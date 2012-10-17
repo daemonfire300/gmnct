@@ -145,15 +145,15 @@ app.get("/register", function(req, res) {
         title: "Register",
         validators: {
             email: {
-                length: true,
+                valid_length: true,
                 isEmail: true
             },
             username: {
-                length: true,
+                valid_length: true,
                 isText: true
             },
             password: {
-                length: true
+                valid_length: true
             }
         }
     });
@@ -163,15 +163,15 @@ app.post("/register", function(req, res) {
     var errors = [];
     var validators = {
         email: {
-            length: check(req.body.email).len(4, 64),
+            valid_length: check(req.body.email).len(4, 64),
             isEmail: check(req.body.email).isEmail()
         },
         username: {
-            length: check(req.body.username).len(3, 64),
+            valid_length: check(req.body.username).len(3, 64),
             isText: check(req.body.username).is(/^[a-zA-Z\d]+$/)
         },
         password: {
-            length: check(req.body.password).len(6, 64)
+            valid_length: check(req.body.password).len(6, 64)
         }
     };
 

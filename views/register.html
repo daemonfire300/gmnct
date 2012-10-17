@@ -6,21 +6,21 @@
     <body>
 
         <form method="POST" action="/register">
-            <% if(!validators.username.length && validators != null){ %>
+            <% if(!validators.username.valid_length && validators != null){ %>
                 <span style="color: red;">Username has to be betwenn 4 and 64 characters</span><br />
             <% } %>
             <% if(!validators.username.isText && validators != null){ %>
                 <span style="color: red;">Username contains invalid characters. Please use only (A-z, 0-9)</span><br />
             <% } %>
             <label>Username <input type="text" name="username" /></label><br />
-            <% if(!validators.email.length && validators != null){ %>
+            <% if(!validators.email.valid_length && validators != null){ %>
                 <span style="color: red;">Email has to be betwenn 4 and 64 characters</span><br />
             <% } %>
             <% if(!validators.email.isEmail && validators != null){ %>
                 <span style="color: red;">This is not a valid email address</span><br />
             <% } %>
             <label>Email <input type="text" name="email" /></label><br />
-            <% if(!validators.password.length && validators != null){ %>
+            <% if(!validators.password.valid_length && validators != null){ %>
                 <span style="color: red;">Password has to be betwenn 4 and 64 characters</span><br />
             <% } %>
             <label>Password <input type="password" name="password" /></label><br />
