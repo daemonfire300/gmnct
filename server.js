@@ -140,7 +140,6 @@ app.get("/", function(req, res) {
             users: users,
             title: "Index"
         });
-        client.end();
     });
 
 });
