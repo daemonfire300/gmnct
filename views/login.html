@@ -4,6 +4,7 @@
         <title><%= title %></title>
     </head>
     <body>
+        <% include header %>
         <div><span style="color: red;"><%= message %></span></div>
         <form method="POST" action="/login">
             <label>Username <input type="text" name="username" /></label><br />

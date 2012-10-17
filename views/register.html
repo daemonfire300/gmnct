@@ -4,7 +4,7 @@
         <title><%= title %></title>
     </head>
     <body>
-
+        <% include header %>
         <form method="POST" action="/register">
             <% if(!validators.username.valid_length && validators != null){ %>
                 <span style="color: red;">Username has to be betwenn 4 and 64 characters</span><br />
