@@ -70,31 +70,31 @@ passport.use(new LocalStrategy(
 
 function(username, password, done) {
     // asynchronous verification, for effect...
-    process.nextTick(function() {
 
-        // Find the user by username. If there is no user with the given
-        // username, or the password is not correct, set the user to `false` to
-        // indicate failure and set a flash message. Otherwise, return the
-        // authenticated `user`.
-        findByUsername(username, function(err, user) {
-            if (err) {
-                return done(err);
-            }
-            if (!user) {
-                return done(null, false, {
-                    message: 'Unknown user ' + username
-                });
-            }
-            var salt = bcrypt.genSaltSync(10);
-            var hash = bcrypt.hashSync(password, salt);
-            if (bcrypt.compareSync(hash, user.password)) {
-                return done(null, false, {
-                    message: 'Invalid password'
-                });
-            }
-            return done(null, user);
-        });
+
+    // Find the user by username. If there is no user with the given
+    // username, or the password is not correct, set the user to `false` to
+    // indicate failure and set a flash message. Otherwise, return the
+    // authenticated `user`.
+    findByUsername(username, function(err, user) {
+        if (err) {
+            return done(err);
+        }
+        if (!user) {
+            return done(null, false, {
+                message: 'Unknown user ' + username
+            });
+        }
+        var salt = bcrypt.genSaltSync(10);
+        var hash = bcrypt.hashSync(password, salt);
+        if (bcrypt.compareSync(hash, user.password)) {
+            return done(null, false, {
+                message: 'Invalid password'
+            });
+        }
+        return done(null, user);
     });
+
 }));
 
 
@@ -219,10 +219,16 @@ app.get("/register/success", function(req, res) {
 });
 
 app.get("/login", function(req, res) {
-    res.render("login", {title: "Login", message: req.flash("error")})
+    res.render("login", {
+        title: "Login",
+        message: req.flash("error")
+    })
 });
 
-app.post("/login", passport.authenticate('local', { failureRedirect: '/login', failureFlash: true }),function(req, res) {
+app.post("/login", passport.authenticate('local', {
+    failureRedirect: '/login',
+    failureFlash: true
+}), function(req, res) {
     console.info(req.user);
 });
 
