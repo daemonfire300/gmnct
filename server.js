@@ -233,6 +233,33 @@ app.post("/login", passport.authenticate('local', {
     res.redirect("/");
 });
 
+app.get("/user/view/:userid", function(req, res){
+    if(req.params.userid >= 1){
+        var uid = req.params.id;
+        console.log("Attempting to find user with id: "+uid);
+        var query = client.query("SELECT * FROM users WHERE id = $1", [uid], function(err, result){
+            if(!err){
+                if(result.rows[0]){
+                    res.render("user/view", {
+                        title: "View User "+result.rows[0].username,
+                        user: result.rows[0]
+                    });
+                }
+                else{
+                    res.redirect("/"),
+                }
+            }
+            else{
+                console.error(err);
+                res.send("error");
+            }
+        });
+    }
+    else{
+        res.redirect("/");
+    }
+});
+
 client = new pg.Client(pg_connectionString);
 client.connect(function(err) {
     if(err !== null){
