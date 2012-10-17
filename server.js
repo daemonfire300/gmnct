@@ -123,7 +123,7 @@ app.configure(function() {
 app.get("/", function(req, res) {
     client.query('INSERT INTO users(username, email) VALUES($1, $2)', ["scott_peter", "scott@hotmail.com"]);
     var users = [];
-
+    console.info(req.user);
     var query = client.query('SELECT * FROM users');
     query.on('row', function(result) {
         console.log(result);
@@ -137,6 +137,7 @@ app.get("/", function(req, res) {
     });
     query.on("end", function() {
         res.render('index', {
+            user: req.user,
             users: users,
             title: "Index"
         });
