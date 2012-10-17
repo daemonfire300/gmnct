@@ -13,13 +13,6 @@ var client;
 var app = express();
 
 
-client = new pg.Client(pg_connectionString);
-client.connect();
-console.log("==============================================================");
-console.log("connected to: " + pg_connectionString);
-console.log("==============================================================");
-
-
 function findById(id, fn) {
     client.query("SELECT * FROM users WHERE id = $1", [id], function(err, result) {
         if (result && !err) {
@@ -134,7 +127,7 @@ app.get("/", function(req, res) {
         }
     });
 
-    query.on('error', function(err){
+    query.on('error', function(err) {
         console.error(err);
     });
 
@@ -240,4 +233,16 @@ app.post("/login", passport.authenticate('local', {
     res.redirect("/");
 });
 
-app.listen(process.env.PORT, process.env.IP);
+client = new pg.Client(pg_connectionString);
+client.connect(function(err) {
+    if(err !== null){
+        console.error(err);
+    }
+
+    console.log("==============================================================");
+    console.log("connected to: " + pg_connectionString);
+    console.log("Ready to start app");
+    console.log("==============================================================");
+
+    app.listen(process.env.PORT, process.env.IP);
+});
