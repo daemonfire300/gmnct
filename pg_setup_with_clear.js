@@ -4,9 +4,9 @@ var pg = require('pg').native,
 console.log("connecting to: " + connectionString);
 client = new pg.Client(connectionString);
 client.connect();
-var query = client.query('DROP TABLE IF EXISTS lobbies');
-query = client.query('DROP TABLE IF EXISTS games');
-query = client.query('DROP TABLE IF EXISTS users');
+client.query('DROP TABLE IF EXISTS lobbies');
+client.query('DROP TABLE IF EXISTS games');
+var query = client.query('DROP TABLE IF EXISTS users');
 
 query.on("end", function(){
     var query = client.query('CREATE TABLE users (id SERIAL PRIMARY KEY, username varchar(64) UNIQUE, email varchar(255) UNIQUE, password varchar(255), registration_opt_in boolean DEFAULT false)');
