@@ -7,6 +7,7 @@ var express = require('express'),
     sanitize = validator.sanitize,
     flash = require('connect-flash');
 var route_user = require("./routes/user");
+var route_register = require("./routes/register");
 var pg = require("pg");
 var cons = require("consolidate");
 var pg_connectionString = process.env.DATABASE_URL;
@@ -171,62 +172,9 @@ app.get("/register", function(req, res) {
     });
 });
 
-app.post("/register", function(req, res) {
-    var errors = [];
-    var validators = {
-        email: {
-            valid_length: check(req.body.email).len(4, 64),
-            isEmail: check(req.body.email).isEmail()
-        },
-        username: {
-            valid_length: check(req.body.username).len(3, 64),
-            isText: check(req.body.username).is(/^[a-zA-Z\d]+$/)
-        },
-        password: {
-            valid_length: check(req.body.password).len(6, 64)
-        }
-    };
+app.post("/register", route_register(client, check, sanitize, bcrypt).index);
 
-    if (validators.email.valid_length && validators.email.isEmail && validators.username.valid_length && validators.username.isText && validators.password.valid_length) {
-        var user = {
-            username: sanitize(req.body.username).trim(),
-            email: sanitize(req.body.email).trim(),
-            password: sanitize(req.body.password).trim()
-        };
-
-        var salt = bcrypt.genSaltSync(10);
-        var hash = bcrypt.hashSync(user.password, salt);
-        var query = client.query('INSERT INTO users(username, email, password) VALUES($1, $2, $3)', [user.username, user.email, hash], function(err, result) {
-            if (!err) {
-                console.info("Created User");
-                console.log(result);
-            }
-            else {
-                console.error("Error while trying to create user");
-                console.warn(err);
-                errors.push("Error while trying to create user");
-            }
-        });
-    }
-    else {
-        errors.push("Wrong input");
-    }
-    if (errors.length > 0) {
-        res.render("register", {
-            title: "Register",
-            errors: errors,
-            validators: validators,
-            user_data: req.body
-        });
-    }
-    else {
-        res.redirect("/register/success");
-    }
-});
-
-app.get("/register/success", function(req, res) {
-    res.send("hurray");
-});
+app.get("/register/success", route_register(client, check, sanitize, bcrypt).success);
 
 app.get("/login", function(req, res) {
     res.render("login", {
@@ -240,6 +188,11 @@ app.post("/login", passport.authenticate('local', {
     failureFlash: true
 }), function(req, res) {
     console.info(req.user);
+    res.redirect("/");
+});
+
+app.get("/logout", function(req, res){
+    req.logOut();
     res.redirect("/");
 });
 
