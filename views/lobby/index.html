@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title><%= title %></title>
+    </head>
+    <body>
+        <% include header %>
+        <% if (user){ %>
+        <%= user.id %>
+        <%= user.email %>
+        <%= user.username %>
+        <% } %>
+        <ul>
+        <% if (!no_lobbies) {
+        lobbies.forEach(function(lobby){ %>
+            <li>#<%= lobby.id %> <%= lobby.name %> <%= lobby.owner %> <%= lobby.game %></li>
+        <%
+            })}
+        %>
+        </ul>
+    </body>
+</html>

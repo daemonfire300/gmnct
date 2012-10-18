@@ -6,8 +6,9 @@ var express = require('express'),
     check = validator.check,
     sanitize = validator.sanitize,
     flash = require('connect-flash');
-var route_user = require("./routes/user");
-var route_register = require("./routes/register");
+var route_user = require("./routes/user"),
+    route_register = require("./routes/register"),
+    route_lobby = require("./routes/lobby");
 var pg = require("pg");
 var cons = require("consolidate");
 var pg_connectionString = process.env.DATABASE_URL;
@@ -197,6 +198,10 @@ app.get("/logout", function(req, res){
 });
 
 app.get("/user/view/:userid", route_user(client, check, sanitize).view);
+
+app.get("/lobby", route_lobby(client, check, sanitize).index);
+app.get("/lobby/create", route_lobby(client, check, sanitize).create_get);
+app.post("/lobby/create", route_lobby(client, check, sanitize).create_post);
 
 client.connect(function(err) {
     if(err !== null){

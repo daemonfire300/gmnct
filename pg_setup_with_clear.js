@@ -10,7 +10,10 @@ query.on("end", function(){
     query.on("end", function(){
         var query = client.query('CREATE TABLE games (id SERIAL PRIMARY KEY, name varchar(128) UNIQUE, category varchar(255) )');
         query.on("end", function(){
-            client.query('CREATE TABLE lobbies (id SERIAL PRIMARY KEY, name varchar(128) UNIQUE, owner integer REFERENCES users(id), game integer REFERENCES games(id) )');
+            var query = client.query('CREATE TABLE lobbies (id SERIAL PRIMARY KEY, name varchar(128) UNIQUE, owner integer REFERENCES users(id), game integer REFERENCES games(id) )');
+            query.on("end", function(){
+                client.query("INSERT INTO games(name, category) VALUES ('World of Warcraft', 'MMORPG') ('CS:GO', 'FPS') ('Command&Conquer', 'RTS');");
+            });
         });
     });
 });

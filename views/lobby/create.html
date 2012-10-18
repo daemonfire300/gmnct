@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title><%= title %></title>
+    </head>
+    <body>
+        <% include header %>
+        <% if (user){ %>
+        <%= user.id %>
+        <%= user.email %>
+        <%= user.username %>
+        <% } %>
+        <div>
+            <form action="/lobby/create" method="POST">
+                <label>Name <input type="text" name="lobbyname" /></label>
+                <label>Game <select name="game">
+                    <% if (games) {
+        games.forEach(function(game){ %>
+            <option value="<%= game.id %>" > <%= game.name %> | <%= game.category %></option>
+        <%
+            })}
+        %>
+                    </select>
+                </label>
+            </form>
+        </div>
+    </body>
+</html>
