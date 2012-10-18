@@ -243,7 +243,7 @@ app.post("/login", passport.authenticate('local', {
     res.redirect("/");
 });
 
-app.get("/user/view/:userid", userRoute.loadUserById);
+app.get("/user/view/:userid", userRoute.viewUserById);
 
 client = new pg.Client(pg_connectionString);
 client.connect(function(err) {
