@@ -1,8 +1,12 @@
 <nav>
     <a href="/">Start</a>
     <a href="/register">Register</a>
+    <% if (user) { %>
+    <a href="/logout">Logout</a>
+    <% } else { %>
     <a href="/login">Login</a>
-    <a href=""></a>
+    <% } %>
+    <a href="/lobby">Lobbies</a>
     <a href=""></a>
     <a href=""></a>
 </nav>

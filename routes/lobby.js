@@ -1,8 +1,9 @@
 module.exports = function(client, check, sanitize) {
     return {
         index: function(req, res) {
-            client.query("SELECT * FROM lobbies", function(err, result) {
+            client.query("SELECT l.name, o.username, o.id, g.name as game, g.category FROM lobbies l LEFT JOIN users o ON o.id = l.owner LEFT JOIN games g ON g.id = l.game", function(err, result) {
                 if (!err) {
+                    console.log(result.rows);
                     res.render("lobby/index", {
                         title: "List of open game lobbies",
                         lobbies: result.rows,
