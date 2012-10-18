@@ -242,7 +242,6 @@ app.post("/login", passport.authenticate('local', {
 });
 
 app.get("/user/view/:userid", function(req, res){
-    console.log("ID: "+req.params.userid);
     if(check(req.params.userid).isInt()){
         var uid = sanitize(req.params.userid).toInt();
         console.log("Attempting to find user with id: "+uid);
@@ -255,7 +254,10 @@ app.get("/user/view/:userid", function(req, res){
                     });
                 }
                 else{
-                    res.redirect("/");
+                    res.render("error", {
+                        title: "User could not be found",
+                        message: "User does not exist"
+                    });
                 }
             }
             else{
