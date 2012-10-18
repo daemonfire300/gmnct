@@ -6,6 +6,7 @@ var express = require('express'),
     check = validator.check,
     sanitize = validator.sanitize,
     flash = require('connect-flash');
+var userRoute = require("user");
 var pg = require("pg");
 var cons = require("consolidate");
 var pg_connectionString = process.env.DATABASE_URL;
@@ -242,35 +243,7 @@ app.post("/login", passport.authenticate('local', {
     res.redirect("/");
 });
 
-app.get("/user/view/:userid", function(req, res){
-    if(check(req.params.userid).isInt()){
-        var uid = sanitize(req.params.userid).toInt();
-        console.log("Attempting to find user with id: "+uid);
-        var query = client.query("SELECT * FROM users WHERE id = $1", [uid], function(err, result){
-            if(!err){
-                if(result.rows[0]){
-                    res.render("user/view", {
-                        title: "View User "+result.rows[0].username,
-                        user: result.rows[0]
-                    });
-                }
-                else{
-                    res.render("error", {
-                        title: "User could not be found",
-                        message: "User does not exist"
-                    });
-                }
-            }
-            else{
-                console.error(err);
-                res.send("error");
-            }
-        });
-    }
-    else{
-        res.redirect("/");
-    }
-});
+app.get("/user/view/:userid", userRoute.loadUserById);
 
 client = new pg.Client(pg_connectionString);
 client.connect(function(err) {
