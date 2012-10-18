@@ -242,8 +242,9 @@ app.post("/login", passport.authenticate('local', {
 });
 
 app.get("/user/view/:userid", function(req, res){
-    if(req.params.userid >= 1){
-        var uid = req.params.userid;
+    console.log("ID: "+req.params.userid);
+    if(check(req.params.userid).isInt()){
+        var uid = sanitize(req.params.userid).toInt();
         console.log("Attempting to find user with id: "+uid);
         var query = client.query("SELECT * FROM users WHERE id = $1", [uid], function(err, result){
             if(!err){
