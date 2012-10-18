@@ -111,6 +111,14 @@ app.configure(function() {
     app.use(passport.initialize());
     app.use(passport.session());
     app.use(flash());
+    app.use(function(req, res, next){
+        if(req.user === null){
+            req.user.id = null;
+            req.user.username = null;
+            req.user.email = null;
+        }
+        next();
+    });
     app.use(app.router);
 });
 
