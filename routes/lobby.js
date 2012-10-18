@@ -38,7 +38,15 @@ module.exports = function(client, check, sanitize) {
                 });
             }
             else {
-                res.redirect("/lobby");
+                client.query("INSERT INTO lobbies(name, game) VALUES($1, $2)", [req.param("name"), req.param("game")], function(err, result){
+                    if(!err){
+                        res.redirect("/lobby");
+                    }
+                    else{
+                        console.log(err);
+                        res.send("error");
+                    }
+                });
             }
         },
         create_get: function(req, res) {

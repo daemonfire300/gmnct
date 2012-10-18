@@ -11,6 +11,11 @@
         <%= user.username %>
         <% } %>
         <div>
+            <% if (errors) { %>
+            <div>
+                <%= errors %>
+            </div>
+            <% } %>
             <form action="/lobby/create" method="POST">
                 <label>Name <input type="text" name="name" /></label>
                 <label>Game <select name="game">
