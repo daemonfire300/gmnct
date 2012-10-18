@@ -2,6 +2,7 @@ var express = require('express'),
     passport = require('passport'),
     LocalStrategy = require('passport-local').Strategy,
     bcrypt = require("bcrypt"),
+    expressValidator = require("express-validator"),
     validator = require("validator"),
     check = validator.check,
     sanitize = validator.sanitize,
@@ -105,6 +106,7 @@ app.configure(function() {
     app.use(express.logger());
     app.use(express.cookieParser());
     app.use(express.bodyParser());
+    app.use(expressValidator);
     app.use(express.methodOverride());
     app.use(express.session({
         secret: 'ndfgondfngodfngodnfgondfong'
