@@ -113,9 +113,10 @@ app.configure(function() {
     app.use(flash());
     app.use(function(req, res, next){
         if(req.user === null || req.user === undefined){
-            req.user.id = null;
-            req.user.username = null;
-            req.user.email = null;
+            res.locals.user = req.user;
+        }
+        else{
+            res.locals.user = false;
         }
         next();
     });

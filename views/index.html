@@ -5,9 +5,11 @@
     </head>
     <body>
         <% include header %>
+        <% if (user){ %>
         <%= user.id %>
         <%= user.email %>
         <%= user.username %>
+        <% } %>
         <ul>
         <% if (users) {
         users.forEach(function(user){ %>
