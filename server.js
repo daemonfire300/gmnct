@@ -6,7 +6,7 @@ var express = require('express'),
     check = validator.check,
     sanitize = validator.sanitize,
     flash = require('connect-flash');
-var routes = require("./routes");
+var route_user = require("./routes/user");
 var pg = require("pg");
 var cons = require("consolidate");
 var pg_connectionString = process.env.DATABASE_URL;
@@ -243,7 +243,7 @@ app.post("/login", passport.authenticate('local', {
     res.redirect("/");
 });
 
-app.get("/user/view/:userid", routes.user(client, check, sanitize).view);
+app.get("/user/view/:userid", route_user(client, check, sanitize).view);
 
 client = new pg.Client(pg_connectionString);
 client.connect(function(err) {
