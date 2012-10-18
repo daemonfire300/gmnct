@@ -10,7 +10,7 @@ var route_user = require("./routes/user");
 var pg = require("pg");
 var cons = require("consolidate");
 var pg_connectionString = process.env.DATABASE_URL;
-var client;
+var client = new pg.Client(pg_connectionString);
 var app = express();
 
 
@@ -245,7 +245,6 @@ app.post("/login", passport.authenticate('local', {
 
 app.get("/user/view/:userid", route_user(client, check, sanitize).view);
 
-client = new pg.Client(pg_connectionString);
 client.connect(function(err) {
     if(err !== null){
         console.error(err);
