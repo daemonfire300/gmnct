@@ -16,6 +16,12 @@ var pg_connectionString = process.env.DATABASE_URL;
 var client = new pg.Client(pg_connectionString);
 var app = express();
 
+function ensureAuthenticated(req, res, next) {
+    if (req.isAuthenticated()) {
+        return next();
+    }
+    res.redirect('/login');
+}
 
 function findById(id, fn) {
     client.query("SELECT * FROM users WHERE id = $1", [id], function(err, result) {
@@ -116,11 +122,11 @@ app.configure(function() {
     app.use(passport.initialize());
     app.use(passport.session());
     app.use(flash());
-    app.use(function(req, res, next){
-        if(req.user === null || req.user === undefined){
+    app.use(function(req, res, next) {
+        if (req.user === null || req.user === undefined) {
             res.locals.user = req.user;
         }
-        else{
+        else {
             res.locals.user = false;
         }
         next();
@@ -194,7 +200,7 @@ app.post("/login", passport.authenticate('local', {
     res.redirect("/");
 });
 
-app.get("/logout", function(req, res){
+app.get("/logout", function(req, res) {
     req.logOut();
     res.redirect("/");
 });
@@ -203,10 +209,10 @@ app.get("/user/view/:userid", route_user(client, check, sanitize).view);
 
 app.get("/lobby", route_lobby(client, check, sanitize).index);
 app.get("/lobby/create", route_lobby(client, check, sanitize).create_get);
-app.post("/lobby/create", route_lobby(client, check, sanitize).create_post);
+app.post("/lobby/create", ensureAuthenticated, route_lobby(client, check, sanitize).create_post);
 
 client.connect(function(err) {
-    if(err !== null){
+    if (err !== null) {
         console.error(err);
     }
 

@@ -20,6 +20,7 @@ module.exports = function(client, check, sanitize) {
             req.assert("game", "Game not found").isInt();
 
             req.sanitize("game").toInt();
+            var userId = req.user.id;
 
             var errors = req.validationErrors();
             if (errors) {
@@ -38,7 +39,7 @@ module.exports = function(client, check, sanitize) {
                 });
             }
             else {
-                client.query("INSERT INTO lobbies(name, game) VALUES($1, $2)", [req.param("name"), req.param("game")], function(err, result){
+                client.query("INSERT INTO lobbies(name, game, owner) VALUES($1, $2, $3)", [req.param("name"), req.param("game"), userId], function(err, result){
                     if(!err){
                         res.redirect("/lobby");
                     }
