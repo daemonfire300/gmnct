@@ -31,8 +31,15 @@ module.exports = function(client, check, sanitize) {
             else {
                 client.query("SELECT * FROM lobbies WHERE id = $1", [lobbyId], function(err, result) {
                     if (!err) {
+                        var name = "";
+                        if(result.rows[0]){
+                            name = result.rows[0].name;
+                        }
+                        else{
+                            name = "unknown lobby";
+                        }
                         res.render("lobby/view", {
-                            title: "View lobby "+result.rows[0].name,
+                            title: "View lobby "+name,
                             lobby: result.rows[0],
                             errors: null
                         });
