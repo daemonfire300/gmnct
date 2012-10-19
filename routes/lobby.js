@@ -81,7 +81,7 @@ module.exports = function(client, check, sanitize) {
             }
             else {
                 errors = null;
-                client.query("SELECT lobby FROM users WHERE id = $1", [userId], function(err, result) {
+                client.query("SELECT COUNT() FROM users u LEFT JOIN lobby_userlist ul ON ul.user = u.id WHERE u.id = $1", [userId], function(err, result) {
                     if (!err && result.rows[0]) {
                         if (result.rows[0].lobby === null || result.rows[0].lobby === 0) {
                             client.query("SELECT COUNT(*) as hosting_lobbies FROM lobbies WHERE owner = $1", [userId], function(err, result) {
