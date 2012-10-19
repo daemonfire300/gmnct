@@ -213,6 +213,7 @@ app.post("/lobby/create", ensureAuthenticated, route_lobby(client, check, saniti
 app.get("/lobby/delete/:lobbyid", ensureAuthenticated, route_lobby(client, check, sanitize).delete_get);
 app.get("/lobby/view/:lobbyid", ensureAuthenticated, route_lobby(client, check, sanitize).view_get);
 
+
 client.connect(function(err) {
     if (err !== null) {
         console.error(err);
