@@ -83,6 +83,7 @@ module.exports = function(client, check, sanitize) {
                 errors = null;
                 client.query("SELECT COUNT(*) as in_lobbies FROM users u LEFT JOIN lobby_userlist ul ON ul.user_id = u.id WHERE u.id = $1", [userId], function(err, result) {
                     if (!err) {
+                        console.log(result.rows[0]);
                         if (result.rows[0].in_lobbies < 1) {
                             client.query("SELECT COUNT(*) as hosting_lobbies FROM lobbies WHERE owner = $1", [userId], function(err, result) {
                                 if (!err) {
@@ -98,20 +99,7 @@ module.exports = function(client, check, sanitize) {
                                         });
                                     }
                                     else {
-                                        client.query("SELECT * FROM games", function(err, result) {
-                                            if (!err) {
-                                                games = result.rows;
-                                                /*res.render("lobby/create", {
-                                                    title: "Create a new lobby",
-                                                    games: games,
-                                                    errors: "You can only host one lobby at a time"
-                                                });*/
-                                                errors = "You can only host one lobby at a time";
-                                            }
-                                            else {
-                                                pg_errors.push(err);
-                                            }
-                                        });
+                                        errors = "You can only host one lobby at a time";
                                     }
                                 }
                                 else {
@@ -128,13 +116,22 @@ module.exports = function(client, check, sanitize) {
                 console.log(pg_errors);
                 console.log("pg_errors _end");
                 if (pg_errors.length < 1) {
-                    res.render("lobby/create", {
-                        title: "Create a new lobby",
-                        games: games,
-                        errors: errors
+                    client.query("SELECT * FROM games", function(err, result) {
+                        if (!err) {
+                            games = result.rows;
+
+                            res.render("lobby/create", {
+                                title: "Create a new lobby",
+                                games: games,
+                                errors: errors
+                            });
+                        }
+                        else {
+                            pg_errors.push(err);
+                        }
                     });
                 }
-                else{
+                else {
                     console.log(pg_errors);
                     res.send("error service operation failed");
                 }
