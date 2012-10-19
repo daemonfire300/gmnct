@@ -13,7 +13,7 @@
         <ul>
         <% if (!no_lobbies) {
         lobbies.forEach(function(lobby){ %>
-            <li>#<%= lobby.name %> by <%= lobby.username %> playing <%= lobby.game %> in Category <%= lobby.category %></li>
+            <li>#<%= lobby.name %> by <%= lobby.username %> playing <%= lobby.game %> in Category <%= lobby.category %> <a href="/lobby/view/<%= lobby.id%>">View Lobby</a></li>
         <%
             })}
         %>
