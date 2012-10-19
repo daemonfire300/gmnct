@@ -33,15 +33,15 @@ module.exports = function(client, check, sanitize) {
                     if (!err) {
                         var name = "";
                         var errors = null;
-                        if(result.rows[0]){
+                        if (result.rows[0]) {
                             name = result.rows[0].name;
                         }
-                        else{
+                        else {
                             name = "unknown lobby";
                             errors = 'Lobby does not exist, try and <a href="/lobby/create">create a new lobby</a>';
                         }
                         res.render("lobby/view", {
-                            title: "View lobby "+name,
+                            title: "View lobby " + name,
                             lobby: result.rows[0],
                             errors: errors
                         });
@@ -61,13 +61,16 @@ module.exports = function(client, check, sanitize) {
             var userId = req.user.id;
 
             var errors = req.validationErrors();
+            var pg_errors = [];
+            var games = null;
             if (errors) {
                 console.log(errors);
                 client.query("SELECT * FROM games", function(err, result) {
                     if (!err) {
+                        games = result.rows;
                         res.render("lobby/create", {
                             title: "Create a new lobby",
-                            games: result.rows,
+                            games: games,
                             errors: errors.toString()
                         });
                     }
@@ -77,38 +80,61 @@ module.exports = function(client, check, sanitize) {
                 });
             }
             else {
-                client.query("SELECT COUNT(*) as hosting_lobbies FROM lobbies WHERE owner = $1", [userId], function(err, result) {
-                    if (!err) {
-                        if (result.rows[0].hosting_lobbies < 2) {
-                            client.query("INSERT INTO lobbies(name, game, owner) VALUES($1, $2, $3)", [req.param("name"), req.param("game"), userId], function(err, result) {
+                errors = null;
+                client.query("SELECT lobby FROM users WHERE id = $1", [userId], function(err, result) {
+                    if (!err && result.rows[0]) {
+                        if (result.rows[0].lobby === null || result.rows[0].lobby === 0) {
+                            client.query("SELECT COUNT(*) as hosting_lobbies FROM lobbies WHERE owner = $1", [userId], function(err, result) {
                                 if (!err) {
-                                    res.redirect("/lobby");
+                                    if (result.rows[0].hosting_lobbies < 2) {
+                                        client.query("INSERT INTO lobbies(name, game, owner) VALUES($1, $2, $3)", [req.param("name"), req.param("game"), userId], function(err, result) {
+                                            if (!err) {
+                                                res.redirect("/lobby");
+                                            }
+                                            else {
+                                                pg_errors.push(err);
+                                                console.log(err);
+                                            }
+                                        });
+                                    }
+                                    else {
+                                        client.query("SELECT * FROM games", function(err, result) {
+                                            if (!err) {
+                                                games = result.rows;
+                                                res.render("lobby/create", {
+                                                    title: "Create a new lobby",
+                                                    games: games,
+                                                    errors: "You can only host one lobby at a time"
+                                                });
+                                                errors = "You can only host one lobby at a time";
+                                            }
+                                            else {
+                                                pg_errors.push(err);
+                                            }
+                                        });
+                                    }
                                 }
                                 else {
-                                    console.log(err);
-                                    res.send("error");
+                                    pg_errors.push(err);
                                 }
                             });
                         }
                         else {
-                            client.query("SELECT * FROM games", function(err, result) {
-                                if (!err) {
-                                    res.render("lobby/create", {
-                                        title: "Create a new lobby",
-                                        games: result.rows,
-                                        errors: "You can only host one lobby at a time"
-                                    });
-                                }
-                                else {
-                                    res.send("error");
-                                }
-                            });
+                            pg_errors.push(err);
                         }
                     }
-                    else {
-                        res.send("error");
-                    }
                 });
+                if (pg_errors.length < 1) {
+                    res.render("lobby/create", {
+                        title: "Create a new lobby",
+                        games: games,
+                        errors: errors
+                    });
+                }
+                else{
+                    console.log(pg_errors);
+                    res.send("error service operation failed");
+                }
             }
         },
         create_get: function(req, res) {
