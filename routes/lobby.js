@@ -82,11 +82,11 @@ module.exports = function(client, check, sanitize) {
             else {
                 errors = null;
                 client.query("SELECT COUNT(*) as in_lobbies FROM users u LEFT JOIN lobby_userlist ul ON ul.user_id = u.id WHERE u.id = $1", [userId], function(err, result) {
-                    if (!err && result.rows[0]) {
-                        if (result.rows[0].in_lobbies === null || result.rows[0].in_lobbies === 0) {
+                    if (!err) {
+                        if (result.rows[0].in_lobbies < 1) {
                             client.query("SELECT COUNT(*) as hosting_lobbies FROM lobbies WHERE owner = $1", [userId], function(err, result) {
                                 if (!err) {
-                                    if (result.rows[0].hosting_lobbies < 2) {
+                                    if (result.rows[0].hosting_lobbies < 1) {
                                         client.query("INSERT INTO lobbies(name, game, owner) VALUES($1, $2, $3)", [req.param("name"), req.param("game"), userId], function(err, result) {
                                             if (!err) {
                                                 res.redirect("/lobby");
