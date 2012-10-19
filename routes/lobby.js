@@ -81,7 +81,7 @@ module.exports = function(client, check, sanitize) {
             }
             else {
                 errors = null;
-                client.query("SELECT COUNT(*) as in_lobbies FROM users u LEFT JOIN lobby_userlist ul ON ul.user_id = u.id WHERE u.id = $1", [userId], function(err, result) {
+                client.query("SELECT COUNT(*) as in_lobbies FROM users u RIGHT JOIN lobby_userlist ul ON ul.user_id = u.id WHERE u.id = $1", [userId], function(err, result) {
                     if (!err) {
                         console.log(result.rows[0]);
                         if (result.rows[0].in_lobbies < 1) {
