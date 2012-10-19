@@ -40,12 +40,35 @@ module.exports = function(client, check, sanitize) {
                 });
             }
             else {
-                client.query("INSERT INTO lobbies(name, game, owner) VALUES($1, $2, $3)", [req.param("name"), req.param("game"), userId], function(err, result){
-                    if(!err){
-                        res.redirect("/lobby");
+                client.query("SELECT COUNT(*) as hosting_lobbies FROM lobbies WHERE owner = $1", [userId], function(err, result) {
+                    if (!err) {
+                        if (result.rows[0].hosting_lobbies <= 2) {
+                            client.query("INSERT INTO lobbies(name, game, owner) VALUES($1, $2, $3)", [req.param("name"), req.param("game"), userId], function(err, result) {
+                                if (!err) {
+                                    res.redirect("/lobby");
+                                }
+                                else {
+                                    console.log(err);
+                                    res.send("error");
+                                }
+                            });
+                        }
+                        else {
+                            client.query("SELECT * FROM games", function(err, result) {
+                                if (!err) {
+                                    res.render("lobby/create", {
+                                        title: "Create a new lobby",
+                                        games: result.rows,
+                                        errors: "You can only host one lobby at a time"
+                                    });
+                                }
+                                else {
+                                    res.send("error");
+                                }
+                            });
+                        }
                     }
-                    else{
-                        console.log(err);
+                    else {
                         res.send("error");
                     }
                 });
