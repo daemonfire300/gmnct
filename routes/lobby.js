@@ -101,11 +101,11 @@ module.exports = function(client, check, sanitize) {
                                         client.query("SELECT * FROM games", function(err, result) {
                                             if (!err) {
                                                 games = result.rows;
-                                                res.render("lobby/create", {
+                                                /*res.render("lobby/create", {
                                                     title: "Create a new lobby",
                                                     games: games,
                                                     errors: "You can only host one lobby at a time"
-                                                });
+                                                });*/
                                                 errors = "You can only host one lobby at a time";
                                             }
                                             else {
@@ -124,6 +124,9 @@ module.exports = function(client, check, sanitize) {
                         }
                     }
                 });
+                console.log("pg_errors");
+                console.log(pg_errors);
+                console.log("pg_errors _end");
                 if (pg_errors.length < 1) {
                     res.render("lobby/create", {
                         title: "Create a new lobby",
