@@ -104,6 +104,20 @@ module.exports = function(client, check, sanitize) {
                                 }
                                 else {
                                     pg_errors.push(err);
+                                    client.query("SELECT * FROM games", function(err, result) {
+                                        if (!err) {
+                                            games = result.rows;
+
+                                            res.render("lobby/create", {
+                                                title: "Create a new lobby",
+                                                games: games,
+                                                errors: errors
+                                            });
+                                        }
+                                        else {
+                                            pg_errors.push(err);
+                                        }
+                                    });
                                 }
                             });
                         }
@@ -118,20 +132,7 @@ module.exports = function(client, check, sanitize) {
                 console.log("pg_errors _end");
 
                 if (pg_errors.length < 1) {
-                    client.query("SELECT * FROM games", function(err, result) {
-                        if (!err) {
-                            games = result.rows;
-
-                            res.render("lobby/create", {
-                                title: "Create a new lobby",
-                                games: games,
-                                errors: errors
-                            });
-                        }
-                        else {
-                            pg_errors.push(err);
-                        }
-                    });
+                    console.log("no errors");
                 }
                 else {
                     console.log(pg_errors);

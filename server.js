@@ -20,7 +20,9 @@ function ensureAuthenticated(req, res, next) {
     if (req.isAuthenticated()) {
         return next();
     }
-    res.redirect('/login');
+    else{
+        res.redirect('/login');
+    }
 }
 
 function findById(id, fn) {
@@ -209,7 +211,7 @@ app.get("/user/view/:userid", route_user(client, check, sanitize).view);
 
 app.get("/lobby", route_lobby(client, check, sanitize).index);
 app.get("/lobby/create", route_lobby(client, check, sanitize).create_get);
-app.post("/lobby/create", ensureAuthenticated, route_lobby(client, check, sanitize).create_post);
+app.post("/lobby/create", route_lobby(client, check, sanitize).create_post);
 app.get("/lobby/delete/:lobbyid", ensureAuthenticated, route_lobby(client, check, sanitize).delete_get);
 app.get("/lobby/view/:lobbyid", ensureAuthenticated, route_lobby(client, check, sanitize).view_get);
 
