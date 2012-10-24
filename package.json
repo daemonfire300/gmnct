@@ -5,15 +5,16 @@
   "private": true,
   "dependencies": {
     "express": "3.x",
-    "pg": "latest",
+    "pg": "0.8.6",
     "consolidate": "latest",
-    "ejs": "latest",
-    "passport": "latest",
-    "bcrypt": "latest",
+    "ejs": "0.8.3",
+    "passport": "0.1.12",
+    "bcrypt": "0.7.2",
     "validator": "latest",
     "passport-local": "latest",
     "connect-flash": "latest",
-    "express-validator": "latest"
+    "express-validator": "0.3.0",
+    "async": "latest"
   },
     "engines": {
         "node": "<0.8.12",
