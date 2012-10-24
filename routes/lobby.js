@@ -65,6 +65,7 @@ module.exports = function(client, check, sanitize) {
             var errors = req.validationErrors();
             var pg_errors = [];
             var games = null;
+
             if (errors) {
                 console.log(errors);
                 client.query("SELECT * FROM games", function(err, result) {
