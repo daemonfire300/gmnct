@@ -90,12 +90,12 @@ module.exports = function(client, check, sanitize) {
                             if(!err){
                                 console.log(result.rows);
                                 if (result.rows[0].in_lobbies < 1) {
+                                    callback(null, result);
+                                }
+                                else{
                                     var pg_error = new Error("You can only be part of one lobby");
                                     pg_error.forView = true;
                                     callback(pg_error, result);
-                                }
-                                else{
-                                    callback(null, result);
                                 }
                             }
                             else{
