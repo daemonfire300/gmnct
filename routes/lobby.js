@@ -109,12 +109,12 @@ module.exports = function(client, check, sanitize) {
                         function(err, result) {
                             if(!err){
                                 if (result.rows[0].hosting_lobbies < 1) {
+                                    callback(null, result);
+                                }
+                                else{
                                     var pg_error = new Error("You can only host one lobby");
                                     pg_error.forView = true;
                                     callback(pg_error, result);
-                                }
-                                else{
-                                    callback(null, result);
                                 }
                             }
                             else{
