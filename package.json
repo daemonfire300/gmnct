@@ -17,7 +17,7 @@
     "async": "latest"
   },
     "engines": {
-        "node": "<0.8.12",
+        "node": "0.8.x",
         "npm": ">=1.1"
   }
 }
