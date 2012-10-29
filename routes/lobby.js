@@ -1,4 +1,5 @@
 var async = require("async");
+var JSONResponse = require("/lib/JSONResponse");
 
 module.exports = function(client, check, sanitize) {
     return {
@@ -88,18 +89,18 @@ module.exports = function(client, check, sanitize) {
                         client.query("SELECT COUNT(*) as in_lobbies FROM users u RIGHT JOIN lobby_userlist ul ON ul.user_id = u.id WHERE u.id = $1", [userId],
 
                         function(err, result) {
-                            if(!err){
+                            if (!err) {
                                 console.log(result.rows);
                                 if (result.rows[0].in_lobbies < 1) {
                                     callback(null, result);
                                 }
-                                else{
+                                else {
                                     var pg_error = new Error("You can only be part of one lobby");
                                     pg_error.forView = true;
                                     callback(pg_error, result);
                                 }
                             }
-                            else{
+                            else {
                                 callback(err, result);
                             }
                         });
@@ -108,17 +109,17 @@ module.exports = function(client, check, sanitize) {
                         client.query("SELECT COUNT(*) as hosting_lobbies FROM lobbies WHERE owner = $1", [userId],
 
                         function(err, result) {
-                            if(!err){
+                            if (!err) {
                                 if (result.rows[0].hosting_lobbies < 1) {
                                     callback(null, result);
                                 }
-                                else{
+                                else {
                                     var pg_error = new Error("You can only host one lobby");
                                     pg_error.forView = true;
                                     callback(pg_error, result);
                                 }
                             }
-                            else{
+                            else {
                                 callback(err, result);
                             }
                         });
@@ -127,10 +128,10 @@ module.exports = function(client, check, sanitize) {
                         client.query("INSERT INTO lobbies(name, game, owner) VALUES($1, $2, $3)", [req.param("name"), req.param("game"), userId],
 
                         function(err, result) {
-                            if(!err){
+                            if (!err) {
                                 callback(null, result);
                             }
-                            else{
+                            else {
                                 callback(err, result);
                             }
                         });
@@ -159,63 +160,6 @@ module.exports = function(client, check, sanitize) {
                     }
                 });
                 errors = null;
-                /*client.query("SELECT COUNT(*) as in_lobbies FROM users u RIGHT JOIN lobby_userlist ul ON ul.user_id = u.id WHERE u.id = $1", [userId], function(err, result) {
-                    if (!err) {
-                        console.log(result.rows[0]);
-                        if (result.rows[0].in_lobbies < 1) {
-                            client.query("SELECT COUNT(*) as hosting_lobbies FROM lobbies WHERE owner = $1", [userId], function(err, result) {
-                                if (!err) {
-                                    if (result.rows[0].hosting_lobbies < 1) {
-                                        client.query("INSERT INTO lobbies(name, game, owner) VALUES($1, $2, $3)", [req.param("name"), req.param("game"), userId], function(err, result) {
-                                            if (!err) {
-                                                res.redirect("/lobby");
-                                            }
-                                            else {
-                                                pg_errors.push(err);
-                                                console.log(err);
-                                            }
-                                        });
-                                    }
-                                    else {
-                                        errors = "You can only host one lobby at a time";
-                                    }
-                                }
-                                else {
-                                    pg_errors.push(err);
-                                    client.query("SELECT * FROM games", function(err, result) {
-                                        if (!err) {
-                                            games = result.rows;
-
-                                            res.render("lobby/create", {
-                                                title: "Create a new lobby",
-                                                games: games,
-                                                errors: errors
-                                            });
-                                        }
-                                        else {
-                                            pg_errors.push(err);
-                                        }
-                                    });
-                                }
-                            });
-                        }
-                        else {
-                            pg_errors.push(err);
-                        }
-                    }
-                });
-
-                console.log("pg_errors");
-                console.log(pg_errors);
-                console.log("pg_errors _end");
-
-                if (pg_errors.length < 1) {
-                    console.log("no errors");
-                }
-                else {
-                    console.log(pg_errors);
-                    res.send("error service operation failed");
-                }*/
             }
         },
         create_get: function(req, res) {
@@ -264,6 +208,57 @@ module.exports = function(client, check, sanitize) {
                     }
                 });
             }
+        },
+        join_get: function(req, res) {
+            req.assert("lobby", "Lobby not found").isInt();
+            req.assert("lobby", "Lobby not found").notEmpty();
+
+            req.sanitize("lobby").toInt();
+            var userId = req.user.id;
+            var lobbyId = req.param("lobby");
+
+            async.auto({
+                check_in_lobby: function(callback) {
+                    client.query("SELECT COUNT(*) as in_lobbies FROM users u RIGHT JOIN lobby_userlist ul ON ul.user_id = u.id WHERE u.id = $1", [userId],
+
+                    function(err, result) {
+                        if (!err) {
+                            console.log(result.rows);
+                            if (result.rows[0].in_lobbies < 1) {
+                                callback(null, result);
+                            }
+                            else {
+                                var pg_error = new Error("You can only be part of one lobby");
+                                pg_error.forView = true;
+                                callback(pg_error, result);
+                            }
+                        }
+                        else {
+                            callback(err, result);
+                        }
+                    });
+                },
+                join_lobby: ['check_in_lobby', function(callback, results) {
+                    client.query("INSERT INTO in_lobbies(userId, lobbyId) VALUES($1, $2)", [userId, lobbyId],
+
+                    function(err, result) {
+                        if (!err) {
+                            callback(null, result);
+                        }
+                        else {
+                            callback(err, result);
+                        }
+                    });
+                }]
+            }, function(err, results) {
+                // everything is done or an error occurred
+                if(!err){
+                    res.json(JSONResponse("Joined the lobby ID: "+lobbyId, true));
+                }
+                else{
+                    res.json(JSONResponse(err.toString(), false, err));
+                }
+            });
         }
     };
 };
