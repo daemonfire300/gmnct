@@ -1,5 +1,5 @@
 var async = require("async");
-var JSONResponse = require("/lib/JSONResponse");
+var JSONResponse = require("./lib/JSONResponse");
 
 module.exports = function(client, check, sanitize) {
     return {
