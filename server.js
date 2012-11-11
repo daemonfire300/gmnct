@@ -12,7 +12,8 @@ var route_user = require("./routes/user"),
     route_lobby = require("./routes/lobby");
 var pg = require("pg");
 var cons = require("consolidate");
-var pg_connectionString = process.env.DATABASE_URL;
+var pg_connectionString = process.env.DATABASE_URL || "tcp://postgres:abc@localhost/gmnct";
+
 var client = new pg.Client(pg_connectionString);
 var app = express();
 
