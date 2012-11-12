@@ -27,6 +27,8 @@
                     return null;
                 }
                 else{
+                    this.id = id;
+                    this.owner = owner;
                     return this;
                 }
             };
@@ -35,6 +37,7 @@
                 /*
                     TO_BE_DONE: Should load information about the lobby from the server
                 */
+                var data = null;
                 callback(data, data.error);
             };
 
@@ -44,24 +47,58 @@
                 $.get("/lobby/delete/"+id, function(data){
                         if(data.error){
                             alert("Message: "+data.error.message+" ErrCode: "+data.error.code);
+                            callback(data, data.error);
                         }
                         else{
                             if(data.success && data.success.code == 1){
                                 alert("Lobby has been deleted");
+                                callback(data, null);
                             }
                             else{
                                 alert("Malfunction, please reload page");
                             }
                         }
-                        callback(data, data.error);
                 }, "json");
-            }
+            };
+
+            Lobby.prototype.join = function(callback){
+                var id = this.id;
+
+                $.get("/lobby/join/"+id, function(data){
+                        if(data.error){
+                            alert("Message: "+data.error.message+" ErrCode: "+data.error.code);
+                            callback(data, data.error);
+                        }
+                        else{
+                            if(data.success && data.success.code == 1){
+                                alert("Lobby has been deleted");
+                                callback(data, null);
+                            }
+                            else{
+                                alert("Malfunction, please reload page");
+                            }
+                        }
+                }, "json");
+            };
 
             $(function(){
+                var lobby = new Lobby(<%= lobby.id %>, null);
+
+                $('#js-join-lobby').on("click", function(event){
+                    var obj = $(this);
+                    lobby.join(function(data, err){
+                        console.log(data);
+                        console.log(err);
+                    });
+                });
+
                 $('#js-delete-lobby').on("click", function(event){
                     var obj = $(this);
-                    var id = obj.attr("data-lobby-id");
-                    $.get("/lobby/delete/"+id, function(data){
+                    lobby.delete(function(data, err){
+                        console.log(data);
+                        console.log(err);
+                    });
+                    /*$.get("/lobby/delete/"+id, function(data){
                         if(data.error){
                             alert("Message: "+data.error.message+" ErrCode: "+data.error.code);
                         }
@@ -73,7 +110,7 @@
                                 alert("Malfunction, please reload page");
                             }
                         }
-                    }, "json");
+                    }, "json");*/
                 });
             });
         </script>
