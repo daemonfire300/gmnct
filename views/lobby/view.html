@@ -18,9 +18,45 @@
             <% if (lobby) { %>
             <h1><%= lobby.name %></h1>
             <button id="js-delete-lobby" data-lobby-id="<%= lobby.id %>" type="button">DELETE</button>
+            <button id="js-join-lobby" data-lobby-id="<%= lobby.id %>" type="button">JOIN</button>
             <% } %>
         </div>
         <script type="text/javascript" >
+            Lobby = function (id, owner){
+                if(id == undefined){
+                    return null;
+                }
+                else{
+                    return this;
+                }
+            };
+
+            Lobby.prototype.load = function(callback){
+                /*
+                    TO_BE_DONE: Should load information about the lobby from the server
+                */
+                callback(data, data.error);
+            };
+
+            Lobby.prototype.delete = function(callback){
+                var id = this.id;
+
+                $.get("/lobby/delete/"+id, function(data){
+                        if(data.error){
+                            alert("Message: "+data.error.message+" ErrCode: "+data.error.code);
+                        }
+                        else{
+                            if(data.success && data.success.code == 1){
+                                alert("Lobby has been deleted");
+                            }
+                            else{
+                                alert("Malfunction, please reload page");
+                            }
+                        }
+                        callback(data, data.error);
+                }, "json");
+            }
+
             $(function(){
                 $('#js-delete-lobby').on("click", function(event){
                     var obj = $(this);

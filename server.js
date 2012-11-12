@@ -12,7 +12,7 @@ var route_user = require("./routes/user"),
     route_lobby = require("./routes/lobby");
 var pg = require("pg");
 var cons = require("consolidate");
-var pg_connectionString = process.env.DATABASE_URL || "tcp://postgres:abc@localhost/gmnct";
+var pg_connectionString = process.env.DATABASE_URL || "tcp://postgres:123@localhost/gmnct";
 var client = new pg.Client(pg_connectionString);
 var app = express();
 
@@ -227,5 +227,6 @@ client.connect(function(err) {
     console.log("Ready to start app");
     console.log("==============================================================");
 
-    app.listen(process.env.PORT, process.env.IP);
+    console.log("Going to start app @PORT: "+ 81 + "with @IP" + "localhost");
+    app.listen(81);
 });
