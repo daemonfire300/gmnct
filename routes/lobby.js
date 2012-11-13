@@ -239,7 +239,7 @@ module.exports = function(client, check, sanitize) {
                     });
                 },
                 join_lobby: ['check_in_lobby', function(callback, results) {
-                    client.query("INSERT INTO lobby_userlist(userId, lobbyId) VALUES($1, $2)", [userId, lobbyId],
+                    client.query("INSERT INTO lobby_userlist(user_id, lobby_id) VALUES($1, $2)", [userId, lobbyId],
 
                     function(err, result) {
                         if (!err) {
