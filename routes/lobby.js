@@ -32,25 +32,56 @@ module.exports = function(client, check, sanitize) {
                 });
             }
             else {
-                client.query("SELECT * FROM lobbies WHERE id = $1", [lobbyId], function(err, result) {
-                    if (!err) {
-                        var name = "";
-                        var errors = null;
-                        if (result.rows[0]) {
-                            name = result.rows[0].name;
-                        }
-                        else {
-                            name = "unknown lobby";
-                            errors = 'Lobby does not exist, try and <a href="/lobby/create">create a new lobby</a>';
-                        }
+                async.auto({
+                    check_if_lobby: function(callback){
+                        client.query("SELECT * FROM lobbies l WHERE l.id = $1", [lobbyId], function(err, result) {
+                            if(!err){
+                                callback(null, result.rows[0]);
+                            }
+                            else {
+                                result.name = "unknown lobby";
+                                errors = 'Lobby does not exist, try and <a href="/lobby/create">create a new lobby</a>';
+                                callback({errors: errors, viewError: true}, result);
+                            }
+                        });
+                    },
+                    get_lobby: [ "check_if_lobby", function(callback, lobby){
+                        client.query("SELECT u.id as uid, u.username as username FROM lobbies l LEFT JOIN lobby_userlist lul ON lul.lobby_id = l.id LEFT JOIN users u ON u.id = lul.user_id WHERE l.id = $1", [lobbyId], function(err, result) {
+                            if (!err) {
+                                var name = "";
+                                var errors = null;
+                                if (result.rows.length > 0) {
+                                    callback(null, {lobby: lobby.check_if_lobby, users: result.rows});
+                                }
+                                else {
+                                    callback(null, {lobby: lobby.check_if_lobby, users: null});
+                                }
+                            }
+                            else {
+                                console.error(err);
+                                callback(err, result);
+                            }
+                        });
+                    }]
+                }, function(err, results){
+                    console.log(results);
+                    if(!err){
                         res.render("lobby/view", {
-                            title: "View lobby " + name,
-                            lobby: result.rows[0],
-                            errors: errors
+                                    title: "View lobby " + results.get_lobby.lobby.name,
+                                    lobby: results.get_lobby.lobby,
+                                    errors: null
                         });
                     }
-                    else {
-                        res.send("error");
+                    else if(err.viewError){
+                        res.render("lobby/view", {
+                                    title: "View lobby " + results.name,
+                                    lobby: results.get_lobby.lobby,
+                                    errors: errors
+                        });   
+                    }
+                    else{
+                        console.error(err);
+                        res.send(err);
                     }
                 });
             }
@@ -253,7 +284,7 @@ module.exports = function(client, check, sanitize) {
             }, function(err, results) {
                 // everything is done or an error occurred
                 if(!err){
-                    res.json(JSONResponse("Joined the lobby ID: "+lobbyId, true));
+                    res.json(JSONResponse("Joined the lobby ID: "+lobbyId, {code: 1}));
                 }
                 else{
                     res.json(JSONResponse(err.toString(), false, err));

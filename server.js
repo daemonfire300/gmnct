@@ -82,27 +82,27 @@ function(username, password, done) {
     // username, or the password is not correct, set the user to `false` to
     // indicate failure and set a flash message. Otherwise, return the
     // authenticated `user`.
-    findByUsername(username, function(err, user) {
-        console.log("findbyusername");
-        console.log(user);
-        if (err) {
-            return done(err);
-        }
-        if (!user) {
-            return done(null, false, {
-                message: 'Unknown user ' + username
-            });
-        }
-        var salt = bcrypt.genSaltSync(10);
-        var hash = bcrypt.hashSync(password, salt);
-        if (bcrypt.compareSync(hash, user.password)) {
-            return done(null, false, {
-                message: 'Invalid password'
-            });
-        }
-
-        return done(null, user);
-    });
+    process.nextTick(function(){findByUsername(username, function(err, user) {
+            console.log("findbyusername");
+            console.log(user);
+            if (err) {
+                return done(err);
+            }
+            if (!user) {
+                return done(null, false, {
+                    message: 'Unknown user ' + username
+                });
+            }
+            var salt = bcrypt.genSaltSync(10);
+            var hash = bcrypt.hashSync(password, salt);
+            if (bcrypt.compareSync(hash, user.password)) {
+                return done(null, false, {
+                    message: 'Invalid password'
+                });
+            }
+    
+            return done(null, user);
+        });});
 
 }));
 
