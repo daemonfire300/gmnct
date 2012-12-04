@@ -13,6 +13,7 @@
     "validator": "latest",
     "passport-local": "latest",
     "connect-flash": "latest",
+    "connect-redis": "latest",
     "express-validator": "0.3.0",
     "async": "latest"
   },

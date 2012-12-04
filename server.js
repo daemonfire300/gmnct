@@ -6,7 +6,8 @@ var express = require('express'),
     validator = require("validator"),
     check = validator.check,
     sanitize = validator.sanitize,
-    flash = require('connect-flash');
+    flash = require('connect-flash'), 
+    RedisStore = require('connect-redis') (express);
 var route_user = require("./routes/user"),
     route_register = require("./routes/register"),
     route_lobby = require("./routes/lobby");
@@ -111,14 +112,13 @@ app.configure(function() {
     app.engine('html', cons.ejs);
     app.set('view engine', 'html');
     app.set('views', __dirname + '/views');
+    app.use("/bootstrap", express.static(__dirname + '/bootstrap'));
     app.use(express.logger());
     app.use(express.cookieParser());
     app.use(express.bodyParser());
     app.use(expressValidator);
     app.use(express.methodOverride());
-    app.use(express.session({
-        secret: 'ndfgondfngodfngodnfgondfong'
-    }));
+    app.use(express.session({ store: new RedisStore, secret:'keyboard cat'}));;
     // Initialize Passport! Also use passport.session() middleware, to support
     // persistent login sessions (recommended).
     app.use(passport.initialize());
