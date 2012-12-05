@@ -1,13 +1,11 @@
-<nav>
-    <a href="/">Start</a>
-    <a href="/register">Register</a>
+<ul class="nav">
+    <li class="active"><a href="/">Start</a></li>
+    <li><a href="/register">Register</a></li>
     <% if (user) { %>
-    <a href="/logout">Logout</a>
-    <a href="/lobby/create">Lobbies</a>
+    <li><a href="/logout">Logout</a></li>
+    <li><a href="/lobby/create">Create</a></li>
     <% } else { %>
-    <a href="/login">Login</a>
+    <li><a href="/login">Login</a></li>
     <% } %>
-    <a href="/lobby">Lobbies</a>
-    <a href=""></a>
-    <a href=""></a>
-</nav>
+    <li><a href="/lobby">Lobbies</a></li>
+</ul>

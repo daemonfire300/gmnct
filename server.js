@@ -6,13 +6,16 @@ var express = require('express'),
     validator = require("validator"),
     check = validator.check,
     sanitize = validator.sanitize,
-    flash = require('connect-flash');
+    flash = require('connect-flash'), 
+    swig = require('swig'),
+    RedisStore = require('connect-redis') (express);
 var route_user = require("./routes/user"),
     route_register = require("./routes/register"),
     route_lobby = require("./routes/lobby");
 var pg = require("pg");
 var cons = require("consolidate");
-var pg_connectionString = process.env.DATABASE_URL || "tcp://postgres:abc@localhost/gmnct";
+
+var pg_connectionString = process.env.DATABASE_URL || "tcp://postgres:123@localhost/gmnct";
 
 var client = new pg.Client(pg_connectionString);
 var app = express();
@@ -83,43 +86,46 @@ function(username, password, done) {
     // username, or the password is not correct, set the user to `false` to
     // indicate failure and set a flash message. Otherwise, return the
     // authenticated `user`.
-    findByUsername(username, function(err, user) {
-        console.log("findbyusername");
-        console.log(user);
-        if (err) {
-            return done(err);
-        }
-        if (!user) {
-            return done(null, false, {
-                message: 'Unknown user ' + username
-            });
-        }
-        var salt = bcrypt.genSaltSync(10);
-        var hash = bcrypt.hashSync(password, salt);
-        if (bcrypt.compareSync(hash, user.password)) {
-            return done(null, false, {
-                message: 'Invalid password'
-            });
-        }
-
-        return done(null, user);
-    });
+    process.nextTick(function(){findByUsername(username, function(err, user) {
+            console.log("findbyusername");
+            console.log(user);
+            if (err) {
+                return done(err);
+            }
+            if (!user) {
+                return done(null, false, {
+                    message: 'Unknown user ' + username
+                });
+            }
+            var salt = bcrypt.genSaltSync(10);
+            var hash = bcrypt.hashSync(password, salt);
+            if (bcrypt.compareSync(hash, user.password)) {
+                return done(null, false, {
+                    message: 'Invalid password'
+                });
+            }
+    
+            return done(null, user);
+        });});
 
 }));
 
 
 app.configure(function() {
-    app.engine('html', cons.ejs);
+    app.engine('html', cons.swig);
     app.set('view engine', 'html');
+    swig.init({
+        root: '/views',
+        allowErrors: true
+    });
     app.set('views', __dirname + '/views');
+    app.use("/bootstrap", express.static(__dirname + '/bootstrap'));
     app.use(express.logger());
     app.use(express.cookieParser());
     app.use(express.bodyParser());
     app.use(expressValidator);
     app.use(express.methodOverride());
-    app.use(express.session({
-        secret: 'ndfgondfngodfngodnfgondfong'
-    }));
+    app.use(express.session({ store: new RedisStore, secret:'keyboard cat'}));;
     // Initialize Passport! Also use passport.session() middleware, to support
     // persistent login sessions (recommended).
     app.use(passport.initialize());
@@ -215,7 +221,7 @@ app.get("/lobby/create", route_lobby(client, check, sanitize).create_get);
 app.post("/lobby/create", route_lobby(client, check, sanitize).create_post);
 app.get("/lobby/delete/:lobbyid", ensureAuthenticated, route_lobby(client, check, sanitize).delete_get);
 app.get("/lobby/view/:lobbyid", ensureAuthenticated, route_lobby(client, check, sanitize).view_get);
-app.get("/lobby/join/:lobbyid", ensureAuthenticated, route_lobby(client, check, sanitize).join_get);
+app.get("/lobby/join/:lobby", ensureAuthenticated, route_lobby(client, check, sanitize).join_get);
 
 
 client.connect(function(err) {
@@ -228,5 +234,6 @@ client.connect(function(err) {
     console.log("Ready to start app");
     console.log("==============================================================");
 
-    app.listen(process.env.PORT, process.env.IP);
+    console.log("Going to start app @PORT: "+ 81 + "with @IP" + "localhost");
+    app.listen(81);
 });
