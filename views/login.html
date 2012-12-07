@@ -1,7 +1,7 @@
 {% extends 'index.html' %}
 {% block content %}
         <h1>Login</h1>
-        <div><span style="color: red;"><%= message %></span></div>
+        <div><span style="color: red;">{% message %}</span></div>
         <form method="POST" action="/login">
             <label>Username <input type="text" name="username" /></label><br />
             <label>Password <input type="password" name="password" /></label>
