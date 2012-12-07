@@ -1,11 +1,6 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title><%= title %></title>
-    </head>
-    <body>
-        <%= user.id %>,
-        <%= user.email %>,
-        <%= user.username %>
-    </body>
-</html>
+{% extends 'index.html' %}
+{% block content %}
+    {% user.id %},
+    {% user.email %},
+    {% user.username %}
+{% endblock %}

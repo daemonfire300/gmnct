@@ -1,33 +1,21 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title><%= title %></title>
-    </head>
-    <body>
-        <% include ../header.html %>
-        <% if (user){ %>
-        <%= user.id %>
-        <%= user.email %>
-        <%= user.username %>
-        <% } %>
+{% extends 'index.html' %}
+{% block content %}
+    <div>
+        {% if (errors) %}
         <div>
-            <% if (errors) { %>
-            <div>
-                <%= errors %>
-            </div>
-            <% } %>
-            <form action="/lobby/create" method="POST">
-                <label>Name <input type="text" name="name" /></label>
-                <label>Game <select name="game">
-                    <% if (games) {
-        games.forEach(function(game){ %>
-            <option value="<%= game.id %>" > <%= game.name %> | <%= game.category %></option>
-        <%
-            })}
-        %>
-                    </select>
-                </label>
-            </form>
+            {% errors %}
         </div>
-    </body>
-</html>
+        {% endif %}
+        <form action="/lobby/create" method="POST">
+            <label>Name <input type="text" name="name" /></label>
+            <label>Game <select name="game">
+                {% if (games) {
+                    {% for game in games %}
+                    <option value="{%= game.id %}" > {% game.name %} | {% game.category %}</option>
+                    {% endfor %}
+                {% endif %}
+                </select>
+            </label>
+        </form>
+    </div>
+{% endblock %}
