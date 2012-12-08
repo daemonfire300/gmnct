@@ -1,15 +1,11 @@
 {% extends 'index.html' %}
 {% block content %}
       <h1>List of lobbies</h1>
-      {% if (user) %}
-      {% user.id %}
-      {% user.email %}
-      {% user.username %}
-      {% endif %}
       <ul>
       {% if (!no_lobbies) %}
-      {% for lobby in lobbies %}
-          <li>#{% lobby.name %} by {% lobby.username %} playing {% lobby.game %} in Category {% lobby.category %} <a href="/lobby/view/{% lobby.id %}">View Lobby</a></li>
+            {% for lobby in lobbies %}
+                <li>#{{ lobby.name }} by {{ lobby.username }} playing {{ lobby.game }} in Category {{ lobby.category }} <a href="/lobby/view/{{ lobby.id }}">View Lobby</a></li>
+            {% endfor %}
       {% endif %}
       </ul>
 {% endblock %}

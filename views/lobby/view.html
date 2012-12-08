@@ -1,25 +1,14 @@
-<!DOCTYPE html>
-<html>
-    <head>
-        <title><%= title %></title>
-        <script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
-    </head>
-    <body>
-        <% include ../header.html %>
-        <% if (user){ %>
-        <%= user.id %>
-        <%= user.email %>
-        <%= user.username %>
-        <% } %>
+{% extends 'index.html' %}
+{% block content %}
         <div>
-            <% if (errors) { %>
-            <%- errors %>
-            <% } %>
-            <% if (lobby) { %>
-            <h1><%= lobby.name %></h1>
-            <button id="js-delete-lobby" data-lobby-id="<%= lobby.id %>" type="button">DELETE</button>
-            <button id="js-join-lobby" data-lobby-id="<%= lobby.id %>" type="button">JOIN</button>
-            <% } %>
+            {% if errors %}
+                {{ errors }}
+            {% endif %}
+        {% if (lobby) %}
+            <h1>{{ lobby.name }}</h1>
+            <button id="js-delete-lobby" data-lobby-id="{{ lobby.id }}" type="button">DELETE</button>
+            <button id="js-join-lobby" data-lobby-id="{{ lobby.id }}" type="button">JOIN</button>
+        {% endif %}
         </div>
         <script type="text/javascript" >
             Lobby = function (id, owner){
@@ -71,7 +60,7 @@
                         }
                         else{
                             if(data.success && data.success.code == 1){
-                                alert("Lobby has been deleted");
+                                //alert("Joined Lobby");
                                 callback(data, null);
                             }
                             else{
@@ -82,13 +71,19 @@
             };
 
             $(function(){
-                var lobby = new Lobby(<%= lobby.id %>, null);
+                var lobby = new Lobby({{ lobby.id }}, null);
 
                 $('#js-join-lobby').on("click", function(event){
                     var obj = $(this);
                     lobby.join(function(data, err){
                         console.log(data);
                         console.log(err);
+                        if(err === null){
+                            $(".js-notification").text("Successfully joined the lobby!").show();
+                            setTimeout(function(){
+                                $(".js-notification").hide();
+                            },2000);
+                        }
                     });
                 });
 
@@ -114,5 +109,4 @@
                 });
             });
         </script>
-    </body>
-</html>
+{% endblock %}

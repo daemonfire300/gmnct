@@ -116,7 +116,8 @@ app.configure(function() {
     app.set('view engine', 'html');
     swig.init({
         root: __dirname + '/views',
-        allowErrors: true
+        allowErrors: true,
+        cache: false
     });
     app.set('views', __dirname + '/views');
     app.use("/bootstrap", express.static(__dirname + '/bootstrap'));

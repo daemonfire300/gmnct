@@ -1,9 +1,5 @@
 var pg = require('pg').native,
-<<<<<<< HEAD
-    connectionString = process.env.DATABASE_URL || "tcp://postgres:abc@localhost/gmnct",
-=======
     connectionString = process.env.DATABASE_URL || "tcp://postgres:123@localhost/gmnct",
->>>>>>> 332adaf2473303784a59f56d530bff3d08044d64
     client, query;
 console.log("connecting to: " + connectionString);
 client = new pg.Client(connectionString);
